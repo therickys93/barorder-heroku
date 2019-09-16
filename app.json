@@ -1,0 +1,17 @@
+{
+  "name": "BarOrder Heroku",
+  "description": "Servizio BarOrder per Heroku",
+  "repository": "git@github.com:therickys93/barorder-heroku.git",
+  "success_url": "/",
+  "addons": [{
+      "plan": "heroku-postgresql"
+    }],
+  "buildpacks": [
+    {
+      "url": "heroku/php"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "psql $DATABASE_URL < database/postgresql.sql"
+  }
+}
