@@ -28,4 +28,17 @@ $app->get('/', function() use($app) {
   return 'Hello World';
 });
 
+$app->get('/products', function() use($app) {
+  $st = $app['pdo']->prepare('SELECT name FROM public.product');
+  $st->execute();
+
+  $names = array();
+  while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+    $app['monolog']->addDebug('Row ' . $row['name']);
+    $names[] = $row;
+  }
+
+  return $app->json($names);
+});
+
 $app->run();
