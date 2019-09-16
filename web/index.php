@@ -35,7 +35,7 @@ $app->get('/products', function() use($app) {
   $names = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
     $app['monolog']->addDebug('Row ' . $row['name']);
-    $names[] = $row;
+    $names[] = $row['name'];
   }
 
   return $app->json($names);
