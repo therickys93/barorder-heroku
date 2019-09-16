@@ -24,21 +24,19 @@ $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider
 );
 
 $app->get('/', function() use($app) {
-  $app['monolog']->addDebug('GET /');
-  return 'Hello World';
+  return 'Hello BarOrder from Heroku.';
 });
 
 $app->get('/v1/products', function() use($app) {
   $st = $app['pdo']->prepare('SELECT name FROM public.product');
   $st->execute();
 
-  $names = array();
+  $products = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
-    $app['monolog']->addDebug('Row ' . $row['name']);
-    $names[] = $row['name'];
+    $products[] = $row['name'];
   }
 
-  return $app->json($names);
+  return $app->json($products);
 });
 
 $app->get('/v1/status', function() use($app){
