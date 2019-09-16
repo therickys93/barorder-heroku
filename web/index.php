@@ -59,4 +59,14 @@ $app->post('/v1/deleteProductAll', function() use($app){
   return $app->json($response);
 });
 
+$app->post('/v1/insertProduct/{product}', function($product) use($app){
+  $response = new stdClass();
+  $response->success = false;
+  $st = $app['pdo']->prepare('INSERT INTO public.product VALUES (?)');
+  if($st->execute(array($product))){
+    $response->success = true;
+  }
+  return $app->json($response);
+});
+
 $app->run();
