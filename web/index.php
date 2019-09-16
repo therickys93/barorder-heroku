@@ -49,9 +49,14 @@ $app->get('/v1/status', function() use($app){
   return $app->json($response);
 });
 
-// $app->post('/v1/deleteProductAll', function() use($app){
-//  $st = $app['pdo']->prepare('DELETE FROM public.product');
-//  $st->execute();
-// });
+$app->post('/v1/deleteProductAll', function() use($app){
+  $response = new stdClass();
+  $response->success = false;
+  $st = $app['pdo']->prepare('DELETE FROM public.product');
+  if($st->execute()){
+    $response->success = true;
+  }
+  return $app->json($response);
+});
 
 $app->run();
