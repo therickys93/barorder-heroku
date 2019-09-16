@@ -69,4 +69,14 @@ $app->post('/v1/insertProduct/{product}', function($product) use($app){
   return $app->json($response);
 });
 
+$app->post('/v1/deleteProduct/{product}', function($product) use($app){
+  $response = new stdClass();
+  $response->success = false;
+  $st = $app['pdo']->prepare('DELETE FROM public.product WHERE name = ?');
+  if($st->execute(array($product))){
+    $response->success = true;
+  }
+  return $app->json($response);
+});
+
 $app->run();
