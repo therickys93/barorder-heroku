@@ -54,8 +54,8 @@ ALTER TABLE public.has_products REPLICA IDENTITY FULL;
 CREATE TABLE public."order" (
     id bigint NOT NULL,
     "table" character varying(255) NOT NULL,
-    done boolean DEFAULT false NOT NULL,
-    pay boolean DEFAULT false NOT NULL
+    done bigint DEFAULT 0 NOT NULL,
+    pay bigint DEFAULT 0 NOT NULL
 );
 
 
