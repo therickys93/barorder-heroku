@@ -28,7 +28,7 @@ $app->get('/', function() use($app) {
   return 'Hello World';
 });
 
-$app->get('/products', function() use($app) {
+$app->get('/v1/products', function() use($app) {
   $st = $app['pdo']->prepare('SELECT name FROM public.product');
   $st->execute();
 
@@ -40,5 +40,18 @@ $app->get('/products', function() use($app) {
 
   return $app->json($names);
 });
+
+$app->get('/v1/status', function() use($app){
+  $response = new stdClass();
+  $response->server = true;
+  $response->database = true;
+  $response->version = 'v0.1.0';
+  return $app->json($response);
+});
+
+// $app->post('/v1/deleteProductAll', function() use($app){
+//  $st = $app['pdo']->prepare('DELETE FROM public.product');
+//  $st->execute();
+// });
 
 $app->run();
