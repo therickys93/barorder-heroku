@@ -100,11 +100,11 @@ $app->post('/v1/insertOrder', function (Request $request) use($app){
       'pay' => 0,
       'products' => $request->request->get('products')
   );
-  var_dump($order);
   $st = $app['pdo']->prepare('INSERT INTO public.order VALUES (?, ?, ?, ?)');
   if($st->execute(array($order['id'], $order['table'], $order['done'], $order['pay']))){
     $st = $app['pdo']->prepare('INSERT INTO public.has_products VALUES (?, ?, ?)');
-    for($i = 0; $i < count($order['products']); $i++){
+    $count = count($order['products']);
+    for($i = 0; $i < $count; $i++){
       if($st->execute(array($order['id'], $order['products'][$i]['name'], $order['products'][$i]['quantity']))){
       } else {
         return $app->json($response);
