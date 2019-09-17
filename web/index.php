@@ -23,6 +23,13 @@ $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider
                )
 );
 
+$app->before(function (Request $request) {
+  if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+      $data = json_decode($request->getContent(), true);
+      $request->request->replace(is_array($data) ? $data : array());
+  }
+});
+
 $app->get('/', function() use($app) {
   return 'Hello BarOrder from Heroku.';
 });
@@ -72,6 +79,21 @@ $app->post('/v1/deleteProduct/{product}', function($product) use($app){
   $response->success = false;
   $st = $app['pdo']->prepare('DELETE FROM public.product WHERE name = ?');
   if($st->execute(array($product))){
+    $response->success = true;
+  }
+  return $app->json($response);
+});
+
+$app->post('/v1/insertOrder', function() use($app){
+  $response = new stdClass();
+  $response->success = false;
+  $order = array(
+      'id' => $request->request->get('id'),
+      'table'  => $request->request->get('table'),
+      'done' => $request->request->get('done')
+  );
+  $st = $app['pdo']->prepare('INSERT INTO public.order (id, table, done, pay) VALUES (?, ?, ?, ?)');
+  if($st->execute(array($order->id, $order->table, $order->done, 0))){
     $response->success = true;
   }
   return $app->json($response);
