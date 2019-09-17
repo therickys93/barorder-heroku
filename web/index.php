@@ -90,7 +90,7 @@ $app->post('/v1/deleteProduct/{product}', function($product) use($app){
   return $app->json($response);
 });
 
-$app->post('/v1/insertOrder', function() use($app){
+$app->post('/v1/insertOrder', function (Request $request) use($app){
   $response = new stdClass();
   $response->success = false;
   $order = array(
