@@ -43,12 +43,10 @@ $app->get('/', function() use($app) {
 $app->get('/v1/products', function() use($app) {
   $st = $app['pdo']->prepare('SELECT name FROM public.product');
   $st->execute();
-
   $products = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
     $products[] = $row['name'];
   }
-
   return $app->json($products);
 });
 
@@ -139,6 +137,30 @@ $app->post('/v1/payOrder', function(Request $request) use($app){
     $response->success = true;
   }
   return $app->json($response);
+});
+
+$app->get('/v1/orders', function() use($app){
+  $st = $app['pdo']->prepare('SELECT id FROM public.order WHERE done = 0 AND pay = 0');
+  $st->execute();
+  $ids = array();
+  $products = array();
+  $orders = array();
+  while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+    $orders[] = $row['id'];
+  }
+  return $app->json($orders);
+});
+
+$app->get('/v1/payments', function() use($app){
+  $st = $app['pdo']->prepare('SELECT id FROM public.order WHERE done = 1 AND pay = 0');
+  $st->execute();
+  $ids = array();
+  $products = array();
+  $orders = array();
+  while($row = $st->fetch(PDO::FETCH_ASSOC)){
+    $orders[] = $row['id'];
+  }
+  return $app->json($orders);
 });
 
 $app->run();
