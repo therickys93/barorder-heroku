@@ -2,6 +2,10 @@
 
 require('../vendor/autoload.php');
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 $app = new Silex\Application();
 $app['debug'] = true;
 
