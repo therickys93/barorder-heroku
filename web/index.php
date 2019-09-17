@@ -115,4 +115,17 @@ $app->post('/v1/insertOrder', function (Request $request) use($app){
   return $app->json($response);
 });
 
+$app->post('/v1/completeOrder', function(Request $request) use($app){
+  $response = new stdClass();
+  $response->success = false;
+  $order = array(
+      'id' => $request->request->get('id')
+  );
+  $st = $app['pdo']->prepare('UPDATE public.order SET done = 1 WHERE public.order.id = ?');
+  if($st->execute(array($order['id']))){
+    $response->success = true;
+  }
+  return $app->json($response);
+});
+
 $app->run();
