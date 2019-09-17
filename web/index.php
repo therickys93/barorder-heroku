@@ -30,7 +30,7 @@ $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider
 $app->before(function (Request $request) {
   if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
       $data = json_decode($request->getContent(), true);
-      $request->request->replace(is_array($data) ? $data : array());
+      $request->request->replace($data);
   }
 });
 
@@ -96,10 +96,20 @@ $app->post('/v1/insertOrder', function (Request $request) use($app){
   $order = array(
       'id' => $request->request->get('id'),
       'table'  => $request->request->get('table'),
-      'done' => $request->request->get('done')
+      'done' => 0,
+      'pay' => 0,
+      'products' => $request->request->get('products')
   );
-  $st = $app['pdo']->prepare('INSERT INTO public.order (id, table, done, pay) VALUES (?, ?, ?, ?)');
-  if($st->execute(array($order->id, $order->table, $order->done, 0))){
+  var_dump($order);
+  $st = $app['pdo']->prepare('INSERT INTO public.order VALUES (?, ?, ?, ?)');
+  if($st->execute(array($order['id'], $order['table'], $order['done'], $order['pay']))){
+    $st = $app['pdo']->prepare('INSERT INTO public.has_products VALUES (?, ?, ?)');
+    for($i = 0; $i < count($order['products']); $i++){
+      if($st->execute(array($order['id'], $order['products'][$i]['name'], $order['products'][$i]['quantity']))){
+      } else {
+        return $app->json($response);
+      }
+    }
     $response->success = true;
   }
   return $app->json($response);
