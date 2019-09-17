@@ -31,7 +31,9 @@ $app->before(function (Request $request) {
 });
 
 $app->get('/', function() use($app) {
-  return 'Hello BarOrder from Heroku.';
+  $response = new stdClass();
+  $response->success = true;
+  return $app->json($response);
 });
 
 $app->get('/v1/products', function() use($app) {
