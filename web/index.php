@@ -140,13 +140,19 @@ $app->post('/v1/payOrder', function(Request $request) use($app){
 });
 
 $app->get('/v1/orders', function() use($app){
-  $st = $app['pdo']->prepare('SELECT id FROM public.order WHERE done = 0 AND pay = 0');
+  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 0 AND pay = 0)');
   $st->execute();
   $ids = array();
   $products = array();
   $orders = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
-    $orders[] = $row['id'];
+    $st_products = $app['pdo']->prepare('SELECT name, quantity FROM public.has_products WHERE id = ?');
+    $st_products->execute(array($row['id']));
+    while($row_products = $st_products->fetch(PDO::FETCH_ASSOC)){
+      $products[] = $row_products;
+    }
+    $row['products'] = $products;
+    $orders[] = $row;
   }
   return $app->json($orders);
 });
