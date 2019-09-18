@@ -134,6 +134,10 @@ $app->post('/v1/payOrder', function(Request $request) use($app){
   );
   $st = $app['pdo']->prepare('UPDATE public.order SET pay = 1 WHERE public.order.id = ?');
   if($st->execute(array($order['id']))){
+    $st_delete_products = $app['pdo']->prepare('DELETE FROM public.has_products WHERE id = ?');
+    $st_delete_products->execute(array($order['id']));
+    $st_delete_order = $app['pdo']->prepare('DELETE FROM public.order WHERE id = ?');
+    $st_delete_order->execute(array($order['id']));
     $response->success = true;
   }
   return $app->json($response);
