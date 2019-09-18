@@ -30,7 +30,7 @@ $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider
 $app->before(function (Request $request) {
   if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
       $data = json_decode($request->getContent(), true);
-      $request->request->replace($data);
+      $request->request->replace(is_array($data) ? $data : array());
   }
 });
 
