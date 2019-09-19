@@ -45,7 +45,7 @@ $app->get('/v1/products', function() use($app) {
   $st->execute();
   $products = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
-    $products[] = $row['name'];
+    $products[] = $row;
   }
   return $app->json($products);
 });
