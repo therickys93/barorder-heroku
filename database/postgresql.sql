@@ -67,7 +67,8 @@ ALTER TABLE public."order" REPLICA IDENTITY FULL;
 --
 
 CREATE TABLE public.product (
-    name character varying(255) NOT NULL
+    name character varying(255) NOT NULL,
+    price real NOT NULL
 );
 
 
@@ -94,39 +95,39 @@ COPY public."order" (id, "table", done, pay) FROM stdin;
 -- Data for Name: product; Type: TABLE DATA; Schema: public; Owner: vagrant
 --
 
-COPY public.product (name) FROM stdin;
-acqua
-bibite
-caffe al ginseng
-caffe americano
-caffe d'orzo
-caffe decaffeinato
-caffe decaffeinato shakerato
-caffe espresso
-caffe freddo
-caffe latte
-caffe shakerato
-cappuccino
-cappuccino al ginseng
-cappuccino d'orzo
-cappuccino decaffeinato
-cappuccino freddo
-ciambella
-cioccolata
-cioccolata con panna
-crema di caffe
-crostata
-frullati vari
-insalatone
-latte bianco
-latte macchiato
-panini assortiti
-spremuta
-succhi di frutta
-the ed infusi
-the freddo
-toast
-tramezzini assortiti
+COPY public.product (name, price) FROM stdin;
+acqua	0.5
+bibite	1
+caffe al ginseng	1.5
+caffe americano	1.5
+caffe decaffeinato	1.20000005
+caffe decaffeinato shakerato	1.29999995
+caffe di orzo	1
+caffe espresso	1
+caffe freddo	2
+caffe latte	2.5
+caffe shakerato	1.5
+cappuccino	2.5
+cappuccino al ginseng	2.79999995
+cappuccino di orzo	2.79999995
+cappuccino decaffeinato	2.79999995
+cappuccino freddo	2.79999995
+ciambella	3
+cioccolata	3.5
+cioccolata con panna	4
+crema di caffe	3.5
+crostata	2.5
+frullati vari	3
+insalatone	5
+latte bianco	2
+latte macchiato	2.5
+panini assortiti	4.5
+spremuta	3.5
+succhi di frutta	3
+the ed infusi	2.5
+the freddo	2.5
+toast	5
+tramezzini assortiti	4.5
 \.
 
 
