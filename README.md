@@ -2,7 +2,7 @@
 
 Progetto in sviluppo....
 
-Applicazione Android: tag: 1.2.93
+Applicazione Android: tag: 1.2.100
 
 ## Testare
 
