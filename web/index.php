@@ -41,7 +41,7 @@ $app->get('/', function() use($app) {
 });
 
 $app->get('/v1/products', function() use($app) {
-  $st = $app['pdo']->prepare('SELECT name FROM public.product');
+  $st = $app['pdo']->prepare('SELECT * FROM public.product');
   $st->execute();
   $products = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
