@@ -91,6 +91,16 @@ $app->post('/v1/insertProduct/{product}', function($product) use($app){
   return $app->json($response);
 });
 
+$app->post('/v1/insertProduct/{product}/{price}', function($product, $price) use($app){
+  $response = new stdClass();
+  $response->success = false;
+  $st = $app['pdo']->prepare('INSERT INTO public.product VALUES (?, ?)');
+  if($st->execute(array($product, floatval($price)))){
+    $response->success = true;
+  }
+  return $app->json($response);
+});
+
 $app->post('/v1/deleteProduct/{product}', function($product) use($app){
   $response = new stdClass();
   $response->success = false;
