@@ -45,6 +45,16 @@ $app->get('/v1/products', function() use($app) {
   $st->execute();
   $products = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+    $products[] = $row['name'];
+  }
+  return $app->json($products);
+});
+
+$app->get('/v1/productsWithPrice', function() use($app) {
+  $st = $app['pdo']->prepare('SELECT * FROM public.product');
+  $st->execute();
+  $products = array();
+  while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
     $product = new stdClass();
     $product->name = $row['name'];
     $product->price = floatval($row['price']);
