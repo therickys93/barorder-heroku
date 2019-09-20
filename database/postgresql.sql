@@ -28,6 +28,24 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
+--
+-- Name: update_price_function(); Type: FUNCTION; Schema: public; Owner: igzedusvarvtxq
+--
+
+CREATE FUNCTION public.update_price_function() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    new_price real := 0.0;
+BEGIN
+   new_price := (SELECT SUM(has_products.quantity * product.price) AS price FROM has_products, product WHERE has_products.name = product.name AND id = NEW.id);
+   UPDATE public.order SET price = new_price WHERE id = NEW.id;
+   RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_price_function() OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -56,7 +74,7 @@ CREATE TABLE public."order" (
     "table" character varying(255) NOT NULL,
     done bigint DEFAULT 0 NOT NULL,
     pay bigint DEFAULT 0 NOT NULL,
-    price real NOT NULL DEFAULT 0
+    price real DEFAULT 0 NOT NULL
 );
 
 
@@ -160,6 +178,12 @@ CREATE INDEX idx_16515_has_products_ibfk_1 ON public.has_products USING btree (i
 --
 
 CREATE INDEX idx_16515_has_products_ibfk_2 ON public.has_products USING btree (name);
+
+--
+-- Name: has_products update_price; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER update_price AFTER INSERT ON public.has_products FOR EACH ROW EXECUTE PROCEDURE public.update_price_function();
 
 
 --
