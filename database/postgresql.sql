@@ -55,7 +55,8 @@ CREATE TABLE public."order" (
     id bigint NOT NULL,
     "table" character varying(255) NOT NULL,
     done bigint DEFAULT 0 NOT NULL,
-    pay bigint DEFAULT 0 NOT NULL
+    pay bigint DEFAULT 0 NOT NULL,
+    price real NOT NULL DEFAULT 0
 );
 
 
