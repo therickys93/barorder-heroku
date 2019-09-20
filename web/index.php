@@ -168,7 +168,7 @@ $app->post('/v1/payOrder', function(Request $request) use($app){
 });
 
 $app->get('/v1/orders', function() use($app){
-  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 0 AND pay = 0)');
+  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 0 AND pay = 0)');
   $st->execute();
   $ids = array();
   $products = array();
