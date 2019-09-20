@@ -41,11 +41,24 @@ $app->get('/', function() use($app) {
 });
 
 $app->get('/v1/products', function() use($app) {
-  $st = $app['pdo']->prepare('SELECT * FROM public.product');
+  $st = $app['pdo']->prepare('SELECT * FROM public.product ORDER BY public.product.name');
   $st->execute();
   $products = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
     $products[] = $row['name'];
+  }
+  return $app->json($products);
+});
+
+$app->get('/v1/productsWithPrice', function() use($app) {
+  $st = $app['pdo']->prepare('SELECT * FROM public.product ORDER BY public.product.name');
+  $st->execute();
+  $products = array();
+  while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+    $product = new stdClass();
+    $product->name = $row['name'];
+    $product->price = floatval($row['price']);
+    $products[] = $product;
   }
   return $app->json($products);
 });
@@ -78,6 +91,16 @@ $app->post('/v1/insertProduct/{product}', function($product) use($app){
   return $app->json($response);
 });
 
+$app->post('/v1/insertProduct/{product}/{price}', function($product, $price) use($app){
+  $response = new stdClass();
+  $response->success = false;
+  $st = $app['pdo']->prepare('INSERT INTO public.product VALUES (?, ?)');
+  if($st->execute(array($product, floatval($price)))){
+    $response->success = true;
+  }
+  return $app->json($response);
+});
+
 $app->post('/v1/deleteProduct/{product}', function($product) use($app){
   $response = new stdClass();
   $response->success = false;
@@ -95,11 +118,12 @@ $app->post('/v1/insertOrder', function (Request $request) use($app){
       'id' => $request->request->get('id'),
       'table'  => $request->request->get('table'),
       'done' => 0,
+      'price' => 0,
       'pay' => 0,
       'products' => $request->request->get('products')
   );
-  $st = $app['pdo']->prepare('INSERT INTO public.order VALUES (?, ?, ?, ?)');
-  if($st->execute(array($order['id'], $order['table'], $order['done'], $order['pay']))){
+  $st = $app['pdo']->prepare('INSERT INTO public.order VALUES (?, ?, ?, ?, ?)');
+  if($st->execute(array($order['id'], $order['table'], $order['done'], $order['pay'], $order['price']))){
     $st = $app['pdo']->prepare('INSERT INTO public.has_products VALUES (?, ?, ?)');
     $count = count($order['products']);
     for($i = 0; $i < $count; $i++){
@@ -144,7 +168,7 @@ $app->post('/v1/payOrder', function(Request $request) use($app){
 });
 
 $app->get('/v1/orders', function() use($app){
-  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 0 AND pay = 0)');
+  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 0 AND pay = 0)');
   $st->execute();
   $ids = array();
   $products = array();
@@ -162,7 +186,7 @@ $app->get('/v1/orders', function() use($app){
 });
 
 $app->get('/v1/payments', function() use($app){
-  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 1 AND pay = 0)');
+  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 1 AND pay = 0)');
   $st->execute();
   $ids = array();
   $products = array();
