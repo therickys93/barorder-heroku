@@ -118,11 +118,12 @@ $app->post('/v1/insertOrder', function (Request $request) use($app){
       'id' => $request->request->get('id'),
       'table'  => $request->request->get('table'),
       'done' => 0,
+      'price' => 0,
       'pay' => 0,
       'products' => $request->request->get('products')
   );
-  $st = $app['pdo']->prepare('INSERT INTO public.order VALUES (?, ?, ?, ?)');
-  if($st->execute(array($order['id'], $order['table'], $order['done'], $order['pay']))){
+  $st = $app['pdo']->prepare('INSERT INTO public.order VALUES (?, ?, ?, ?, ?)');
+  if($st->execute(array($order['id'], $order['table'], $order['done'], $order['pay'], $order['price']))){
     $st = $app['pdo']->prepare('INSERT INTO public.has_products VALUES (?, ?, ?)');
     $count = count($order['products']);
     for($i = 0; $i < $count; $i++){
