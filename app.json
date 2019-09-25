@@ -3,6 +3,12 @@
   "description": "Servizio BarOrder per Heroku",
   "repository": "git@github.com:therickys93/barorder-heroku.git",
   "success_url": "/",
+  "env": {
+    "AUTH_TOKEN" : {
+      "description": "Chiave segreta per le comunicazioni",
+      "generator": "secret"
+    }
+  },
   "addons": [{
       "plan": "heroku-postgresql"
     }],
