@@ -13,6 +13,8 @@ $app->register(new Silex\Provider\MonologServiceProvider(), array(
   'monolog.logfile' => 'php://stderr',
 ));
 
+$authentication_code = getenv('AUTH_TOKEN');
+
 $dbopts = parse_url(getenv('DATABASE_URL'));
 $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider('pdo'),
                array(
@@ -27,10 +29,14 @@ $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider
                )
 );
 
-$app->before(function (Request $request) {
+$app->before(function (Request $request) use($app) {
   if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
       $data = json_decode($request->getContent(), true);
       $request->request->replace(is_array($data) ? $data : array());
+  } else {
+    $response = new stdClass();
+    $response->success = false;
+    return $app->json($response);
   }
 });
 
