@@ -30,9 +30,14 @@ $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider
 );
 
 $app->before(function (Request $request) use($app) {
-  if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
-      $data = json_decode($request->getContent(), true);
-      $request->request->replace(is_array($data) ? $data : array());
+  $auth = $request->headers->get("Authorization");
+  $apikey = substr($auth, strpos($auth, ' '));
+  $apikey = trim($apikey);
+  if($apikey == getenv('AUTH_TOKEN')){
+    if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+        $data = json_decode($request->getContent(), true);
+        $request->request->replace(is_array($data) ? $data : array());
+    }
   } else {
     $response = new stdClass();
     $response->success = false;
