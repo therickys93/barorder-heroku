@@ -7,3 +7,10 @@ Applicazione Android: tag: [1.2.102](https://github.com/therickys93/BarOrderAndr
 ## Testare
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
+
+## Versione Live
+
+URL: https://barorder-demo.herokuapp.com
+
+AUTH_TOKEN: password
