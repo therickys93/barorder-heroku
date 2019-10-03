@@ -180,11 +180,11 @@ $app->get('/v1/orders', function() use($app){
   $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 0 AND pay = 0)');
   $st->execute();
   $ids = array();
-  $products = array();
   $orders = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
     $st_products = $app['pdo']->prepare('SELECT name, quantity FROM public.has_products WHERE id = ?');
     $st_products->execute(array($row['id']));
+    $products = array();
     while($row_products = $st_products->fetch(PDO::FETCH_ASSOC)){
       $products[] = $row_products;
     }
@@ -198,11 +198,11 @@ $app->get('/v1/payments', function() use($app){
   $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 1 AND pay = 0)');
   $st->execute();
   $ids = array();
-  $products = array();
   $orders = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
     $st_products = $app['pdo']->prepare('SELECT name, quantity FROM public.has_products WHERE id = ?');
     $st_products->execute(array($row['id']));
+    $products = array();
     while($row_products = $st_products->fetch(PDO::FETCH_ASSOC)){
       $products[] = $row_products;
     }
