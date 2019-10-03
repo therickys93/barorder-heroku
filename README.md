@@ -2,7 +2,7 @@
 
 Progetto in sviluppo....
 
-Applicazione Android: tag: [1.2.105](https://github.com/therickys93/BarOrderAndroid/releases/tag/1.2.105)
+Applicazione Android: tag: [1.2.106](https://github.com/therickys93/BarOrderAndroid/releases/tag/1.2.106)
 
 ## Testare
 
