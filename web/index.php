@@ -194,6 +194,22 @@ $app->get('/v1/orders', function() use($app){
   return $app->json($orders);
 });
 
+$app->post('/v1/order/{id}', function($id) use($app){
+  $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id = ?');
+  $st->execute(array($id));
+  $row = new stdClass();
+  while($row = $st->fetch(PDO::FETCH_ASSOC)){
+    $products = $app['pdo']->prepare('SELECT name, quantity FROM public.has_products WHERE id = ?');
+    $products->execute(array($id));
+    $products_array = array();
+    while($row_products = $products->fetch(PDO::FETCH_ASSOC)){
+      $products_array[] = $row_products;
+    }
+    $row['products'] = $products;
+  }
+  return $app->json($row);
+});
+
 $app->get('/v1/payments', function() use($app){
   $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 1 AND pay = 0)');
   $st->execute();
