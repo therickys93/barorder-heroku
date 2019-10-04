@@ -194,20 +194,22 @@ $app->get('/v1/orders', function() use($app){
   return $app->json($orders);
 });
 
-$app->post('/v1/order/{id}', function($id) use($app){
+$app->get('/v1/order/{order_id}', function($order_id) use($app){
   $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id = ?');
-  $st->execute(array($id));
-  $row = new stdClass();
-  while($row = $st->fetch(PDO::FETCH_ASSOC)){
-    $products = $app['pdo']->prepare('SELECT name, quantity FROM public.has_products WHERE id = ?');
-    $products->execute(array($id));
-    $products_array = array();
-    while($row_products = $products->fetch(PDO::FETCH_ASSOC)){
-      $products_array[] = $row_products;
+  $st->execute(array($order_id));
+  $ids = array();
+  $orders = array();
+  while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
+    $st_products = $app['pdo']->prepare('SELECT name, quantity FROM public.has_products WHERE id = ?');
+    $st_products->execute(array($row['id']));
+    $products = array();
+    while($row_products = $st_products->fetch(PDO::FETCH_ASSOC)){
+      $products[] = $row_products;
     }
     $row['products'] = $products;
+    $orders[] = $row;
   }
-  return $app->json($row);
+  return $app->json($orders);
 });
 
 $app->get('/v1/payments', function() use($app){
