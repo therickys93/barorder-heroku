@@ -13,6 +13,10 @@ $app->register(new Silex\Provider\MonologServiceProvider(), array(
   'monolog.logfile' => 'php://stderr',
 ));
 
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
+  'twig.path' => __DIR__.'/views',
+));
+
 $dbopts = parse_url(getenv('DATABASE_URL'));
 $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider('pdo'),
                array(
@@ -231,7 +235,9 @@ $app->get('/order/{order_id}', function($order_id) use($app){
     $row['products'] = $products;
     $orders[] = $row;
   }
-  return $app->json($orders);
+  var_dump($orders);
+  // return $app->json($orders);
+  return $app['twig']->render('order.twig', array('order' => $orders));
 });
 
 $app->run();
