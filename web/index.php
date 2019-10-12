@@ -27,7 +27,9 @@ $app->register(new Csanquer\Silex\PdoServiceProvider\Provider\PDOServiceProvider
                )
 );
 
-$app->before(function (Request $request) use($app) {
+$api = $app['controllers_factory'];
+
+$api->before(function (Request $request) use($app) {
   $auth = $request->headers->get("Authorization");
   $apikey = substr($auth, strpos($auth, ' '));
   $apikey = trim($apikey);
@@ -49,7 +51,7 @@ $app->get('/', function() use($app) {
   return $app->json($response);
 });
 
-$app->get('/v1/products', function() use($app) {
+$api->get('/products', function() use($app) {
   $st = $app['pdo']->prepare('SELECT * FROM public.product ORDER BY public.product.name');
   $st->execute();
   $products = array();
@@ -59,7 +61,7 @@ $app->get('/v1/products', function() use($app) {
   return $app->json($products);
 });
 
-$app->get('/v1/productsWithPrice', function() use($app) {
+$api->get('/productsWithPrice', function() use($app) {
   $st = $app['pdo']->prepare('SELECT * FROM public.product ORDER BY public.product.name');
   $st->execute();
   $products = array();
@@ -72,7 +74,7 @@ $app->get('/v1/productsWithPrice', function() use($app) {
   return $app->json($products);
 });
 
-$app->get('/v1/status', function() use($app){
+$api->get('/status', function() use($app){
   $response = new stdClass();
   $response->server = true;
   $response->database = true;
@@ -80,7 +82,7 @@ $app->get('/v1/status', function() use($app){
   return $app->json($response);
 });
 
-$app->post('/v1/deleteProductAll', function() use($app){
+$api->post('/deleteProductAll', function() use($app){
   $response = new stdClass();
   $response->success = false;
   $st = $app['pdo']->prepare('DELETE FROM public.product');
@@ -90,7 +92,7 @@ $app->post('/v1/deleteProductAll', function() use($app){
   return $app->json($response);
 });
 
-$app->post('/v1/insertProduct/{product}', function($product) use($app){
+$api->post('/insertProduct/{product}', function($product) use($app){
   $response = new stdClass();
   $response->success = false;
   $st = $app['pdo']->prepare('INSERT INTO public.product VALUES (?)');
@@ -100,7 +102,7 @@ $app->post('/v1/insertProduct/{product}', function($product) use($app){
   return $app->json($response);
 });
 
-$app->post('/v1/insertProduct/{product}/{price}', function($product, $price) use($app){
+$api->post('/insertProduct/{product}/{price}', function($product, $price) use($app){
   $response = new stdClass();
   $response->success = false;
   $st = $app['pdo']->prepare('INSERT INTO public.product VALUES (?, ?)');
@@ -110,7 +112,7 @@ $app->post('/v1/insertProduct/{product}/{price}', function($product, $price) use
   return $app->json($response);
 });
 
-$app->post('/v1/deleteProduct/{product}', function($product) use($app){
+$api->post('/deleteProduct/{product}', function($product) use($app){
   $response = new stdClass();
   $response->success = false;
   $st = $app['pdo']->prepare('DELETE FROM public.product WHERE name = ?');
@@ -120,7 +122,7 @@ $app->post('/v1/deleteProduct/{product}', function($product) use($app){
   return $app->json($response);
 });
 
-$app->post('/v1/insertOrder', function (Request $request) use($app){
+$api->post('/insertOrder', function (Request $request) use($app){
   $response = new stdClass();
   $response->success = false;
   $order = array(
@@ -146,7 +148,7 @@ $app->post('/v1/insertOrder', function (Request $request) use($app){
   return $app->json($response);
 });
 
-$app->post('/v1/completeOrder', function(Request $request) use($app){
+$api->post('/completeOrder', function(Request $request) use($app){
   $response = new stdClass();
   $response->success = false;
   $order = array(
@@ -159,7 +161,7 @@ $app->post('/v1/completeOrder', function(Request $request) use($app){
   return $app->json($response);
 });
 
-$app->post('/v1/payOrder', function(Request $request) use($app){
+$api->post('/payOrder', function(Request $request) use($app){
   $response = new stdClass();
   $response->success = false;
   $order = array(
@@ -176,7 +178,7 @@ $app->post('/v1/payOrder', function(Request $request) use($app){
   return $app->json($response);
 });
 
-$app->get('/v1/orders', function() use($app){
+$api->get('/orders', function() use($app){
   $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 0 AND pay = 0)');
   $st->execute();
   $ids = array();
@@ -194,7 +196,7 @@ $app->get('/v1/orders', function() use($app){
   return $app->json($orders);
 });
 
-$app->get('/v1/order/{order_id}', function($order_id) use($app){
+$api->get('/order/{order_id}', function($order_id) use($app){
   $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id = ?');
   $st->execute(array($order_id));
   $ids = array();
@@ -212,7 +214,7 @@ $app->get('/v1/order/{order_id}', function($order_id) use($app){
   return $app->json($orders);
 });
 
-$app->get('/v1/payments', function() use($app){
+$api->get('/payments', function() use($app){
   $st = $app['pdo']->prepare('SELECT id, public.order.table, done, pay, price FROM public.order WHERE id IN (SELECT id FROM public.order WHERE done = 1 AND pay = 0)');
   $st->execute();
   $ids = array();
@@ -229,5 +231,7 @@ $app->get('/v1/payments', function() use($app){
   }
   return $app->json($orders);
 });
+
+$app->mount('/v1', $api);
 
 $app->run();
