@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ordine #{{ order[0].id }}</title>
+    </head>
+    <body>
+        <h1 align="center">
+            BarOrder
+        </h1>
+        <h2 align="center">
+            Tavolo: {{ order[0].table }}
+        </h2>
+        <h2 align="center">
+            Ordine: #{{ order[0].id }}
+        </h2>
+        <table style="width:100%">
+            <tr>
+                <th>Quantita'</th><th>Descrizione</th><th>Prezzo</th>
+            </tr>
+            <tr><td></td><td></td></tr>
+            {% for product in order[0].products %}
+            <tr>
+                <td align="center">{{ product.quantity }}</td>
+                <td align="center">{{ product.name }}</td>
+                <td align="center">€ {{ product.price }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h2 align="center">
+            Totale: {{ order[0].price }}€
+        </h2>
+    </body>
+</html>
