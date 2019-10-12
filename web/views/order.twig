@@ -18,14 +18,13 @@
                 <th>Quantita'</th><th>Descrizione</th> 
             </tr>
             <tr><td></td><td></td></tr>
+            {% for product in order[0].products %}
             <tr>
-                <td align="center">2</td><td align="center">Pizza margherita</td>
+                <td align="center">{{ product.quantity }}</td><td align="center">{{ product.name }}</td>
             </tr>
-            <tr>
-                <td align="center">2</td><td align="center">Coca cola</td>
-            </tr>
+            {% endfor %}
         </table>
-        <h2 align="center>
+        <h2 align="center">
             Totale: {{ order[0].price }}€
         </h2>
     </body>
