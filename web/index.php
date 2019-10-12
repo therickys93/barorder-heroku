@@ -226,7 +226,7 @@ $app->get('/order/{order_id}', function($order_id) use($app){
   $ids = array();
   $orders = array();
   while ($row = $st->fetch(PDO::FETCH_ASSOC)) {
-    $st_products = $app['pdo']->prepare('SELECT name, quantity FROM public.has_products WHERE id = ?');
+    $st_products = $app['pdo']->prepare('SELECT has_products.name as name, has_products.quantity as quantity, product.price as price FROM public.has_products, public.product WHERE id = ? AND has_products.name = product.name');
     $st_products->execute(array($row['id']));
     $products = array();
     while($row_products = $st_products->fetch(PDO::FETCH_ASSOC)){
@@ -235,8 +235,6 @@ $app->get('/order/{order_id}', function($order_id) use($app){
     $row['products'] = $products;
     $orders[] = $row;
   }
-  var_dump($orders);
-  // return $app->json($orders);
   return $app['twig']->render('order.twig', array('order' => $orders));
 });
 
